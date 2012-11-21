@@ -4,17 +4,19 @@
 Summary:	IntelliJ IDEA 11 - The Most Intelligent Java IDE
 Name:		intellij-idea
 Version:	11.1.4
-Release:	0.1
+Release:	0.3
 License:	Apache v2.0
 Group:		Development/Tools
 Source0:	http://download-ln.jetbrains.com/idea/ideaIC-%{version}.tar.gz
-# NoSource0-md5:	3c85588bb0b89ff565c64b38da1eddc0
+# NoSource0-md5:	e4a8d95573c8b00e2f6722ac63efde0d
 NoSource:	0
 Source1:	%{name}.desktop
 URL:		https://www.jetbrains.com/idea/
+BuildRequires:	desktop-file-utils
 BuildRequires:	jpackage-utils
 BuildRequires:	rpm-javaprov
-BuildRequires:	rpmbuild(macros) >= 1.300
+BuildRequires:	rpmbuild(macros) >= 1.596
+Requires:	desktop-file-utils
 Requires:	jdk >= 1.6
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -24,7 +26,9 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # use /usr/lib, 64bit files do not conflict with 32bit files (64 suffix)
 # this allows to install both arch files and to use 32bit jdk on 64bit os
 %define		_appdir		%{_prefix}/lib/%{name}
-%define		_noautoreqfiles	.*
+
+# rpm5 is so damn slow, so i use this for development:
+%define		_noautoreqfiles	.*\.jar
 
 %description
 IntelliJ IDEA is a code-centric IDE focused on developer productivity.
@@ -62,8 +66,13 @@ cp -a$l bin lib license plugins $RPM_BUILD_ROOT%{_appdir}
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_desktopdir}
 ln -s %{_appdir}/bin/idea.sh $RPM_BUILD_ROOT%{_bindir}/idea
 
+desktop-file-validate $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
+
 %clean
 rm -rf $RPM_BUILD_ROOT
+
+%post
+%update_desktop_database
 
 %files
 %defattr(644,root,root,755)
