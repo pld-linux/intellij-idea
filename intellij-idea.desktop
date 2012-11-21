@@ -1,5 +1,4 @@
 [Desktop Entry]
-Version=1.0
 Name=IntelliJ IDEA CE
 GenericName=IntelliJ IDEA CE
 Comment=Development Environment for Java and Groovy
@@ -8,4 +7,4 @@ Categories=Development;IDE;Java;
 Exec=idea %F
 TryExec=idea
 StartupNotify=true
-Icon=intellij-idea-ce
+Icon=intellij-idea
