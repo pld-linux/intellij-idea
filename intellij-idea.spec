@@ -1,18 +1,17 @@
-# TODO
-# - build from source: http://www.jetbrains.org/
 %include	/usr/lib/rpm/macros.java
-Summary:	IntelliJ IDEA 11 - The Most Intelligent Java IDE
+Summary:	IntelliJ IDEA 12 - The Most Intelligent Java IDE
 Name:		intellij-idea
-Version:	11.1.4
-Release:	0.3
+Version:	12.1.2
+Release:	0.1
 License:	Apache v2.0
 Group:		Development/Tools
-Source0:	http://download-ln.jetbrains.com/idea/ideaIC-%{version}.tar.gz
-# NoSource0-md5:	e4a8d95573c8b00e2f6722ac63efde0d
-NoSource:	0
+Source0:	http://download.jetbrains.com/idea/ideaIC-%{version}-src.tar.bz2
+# Source0-md5:	68cf6340a3ce985cab659944e3ddf926
 Source1:	%{name}.desktop
-URL:		https://www.jetbrains.com/idea/
+URL:		http://www.jetbrains.org/
+BuildRequires:	ant
 BuildRequires:	desktop-file-utils
+BuildRequires:	jdk >= 1.6
 BuildRequires:	jpackage-utils
 BuildRequires:	rpm-javaprov
 BuildRequires:	rpmbuild(macros) >= 1.596
@@ -37,10 +36,14 @@ codebase, makes great suggestions right when you need them, and is
 always ready to help you shape your code.
 
 %prep
-%setup -qn idea-IC-117.963
+%setup -qn ideaIC-129.354
+
+%build
+%ant
 
 # keep only single arch files (don't want to pull 32bit deps by default),
 # if you want to mix, install rpm from both arch
+cd out/dist.unix.ce
 %ifarch %{ix86}
 rm bin/fsnotifier64
 rm bin/libbreakgen64.so
@@ -52,17 +55,19 @@ rm bin/libbreakgen.so
 rm bin/idea.vmoptions
 %endif
 chmod a+rx bin/*.so bin/fsnotifier*
-mv bin/idea.png .
-
-# cleanup backups after patching
-find '(' -name '*~' -o -name '*.orig' ')' -print0 | xargs -0 -r -l512 rm -f
+cd ../..
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_appdir},%{_bindir},%{_pixmapsdir},%{_desktopdir}}
-cp -l build.txt $RPM_BUILD_ROOT/cp-test && l=l && rm -f $RPM_BUILD_ROOT/cp-test
-cp -p idea.png $RPM_BUILD_ROOT%{_pixmapsdir}/%{name}.png
-cp -a$l bin lib license plugins $RPM_BUILD_ROOT%{_appdir}
+
+cd out
+cp -l dist.all.ce/build.txt $RPM_BUILD_ROOT/cp-test && l=l && rm -f $RPM_BUILD_ROOT/cp-test
+cp -a$l dist.all.ce/{bin,lib,license,plugins} $RPM_BUILD_ROOT%{_appdir}
+
+cp -p dist.unix.ce/bin/idea.png $RPM_BUILD_ROOT%{_pixmapsdir}/%{name}.png
+cp -a$l dist.unix.ce/bin $RPM_BUILD_ROOT%{_appdir}
+
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_desktopdir}
 ln -s %{_appdir}/bin/idea.sh $RPM_BUILD_ROOT%{_bindir}/idea
 
@@ -76,6 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%doc LICENSE.txt README.md
 %attr(755,root,root) %{_bindir}/idea
 %dir %{_appdir}
 %{_appdir}/lib
