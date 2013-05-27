@@ -1,0 +1,16 @@
+--- ideaIC-129.354/bin/scripts/unix/idea.sh~	2013-04-24 17:11:10.000000000 +0300
++++ ideaIC-129.354/bin/scripts/unix/idea.sh	2013-05-27 11:41:39.322453107 +0300
+@@ -176,6 +176,13 @@
+ LD_LIBRARY_PATH="$IDE_BIN_HOME:$LD_LIBRARY_PATH"
+ export LD_LIBRARY_PATH
+ 
++# Setup jdk table
++IDEA_CONFIG_HOME=$HOME/.IdeaIC11
++jdk_table=$IDEA_CONFIG_HOME/config/options/jdk.table.xml
++if [ ! -e $jdk_table ]; then
++	cp -p $IDE_HOME/jdk.table.xml $jdk_table
++fi
++
+ # ---------------------------------------------------------------------
+ # Run the IDE.
+ # ---------------------------------------------------------------------

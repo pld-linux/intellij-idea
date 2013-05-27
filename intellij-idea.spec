@@ -2,12 +2,14 @@
 Summary:	IntelliJ IDEA 12 - The Most Intelligent Java IDE
 Name:		intellij-idea
 Version:	12.1.2
-Release:	0.1
+Release:	0.2
 License:	Apache v2.0
 Group:		Development/Tools
 Source0:	http://download.jetbrains.com/idea/ideaIC-%{version}-src.tar.bz2
 # Source0-md5:	68cf6340a3ce985cab659944e3ddf926
 Source1:	%{name}.desktop
+Source2:	jdk.table.xml
+Patch0:		jdk.table.patch
 URL:		http://www.jetbrains.org/
 BuildRequires:	ant
 BuildRequires:	desktop-file-utils
@@ -37,6 +39,8 @@ always ready to help you shape your code.
 
 %prep
 %setup -qn ideaIC-129.354
+%undos bin/scripts/unix/idea.sh
+%patch0 -p1
 
 %build
 %ant
@@ -69,6 +73,7 @@ cp -p dist.unix.ce/bin/idea.png $RPM_BUILD_ROOT%{_pixmapsdir}/%{name}.png
 cp -a$l dist.unix.ce/bin $RPM_BUILD_ROOT%{_appdir}
 
 cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_desktopdir}
+%{__sed} -e 's,@jvmdir@,%{_jvmdir},g' %{SOURCE2} > $RPM_BUILD_ROOT%{_appdir}/jdk.table.xml
 ln -s %{_appdir}/bin/idea.sh $RPM_BUILD_ROOT%{_bindir}/idea
 
 desktop-file-validate $RPM_BUILD_ROOT%{_desktopdir}/%{name}.desktop
@@ -87,6 +92,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_appdir}/lib
 %{_appdir}/license
 %{_appdir}/plugins
+%{_appdir}/jdk.table.xml
 %dir %{_appdir}/bin
 %{_appdir}/bin/idea*.vmoptions
 %{_appdir}/bin/appletviewer.policy
