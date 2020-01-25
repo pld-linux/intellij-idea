@@ -1,7 +1,6 @@
 %define		product	idea
 %define		proddir	%{product}IC
 %define		buildid	139.659.2
-%include	/usr/lib/rpm/macros.java
 Summary:	IntelliJ IDEA 14 - The Most Intelligent Java IDE
 Name:		intellij-idea
 Version:	14.0.2
