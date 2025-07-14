@@ -42,7 +42,7 @@ always ready to help you shape your code.
 %prep
 %setup -qn %{proddir}-%{buildid}
 %undos bin/scripts/unix/%{product}.sh
-%patch0 -p1
+%patch -P0 -p1
 
 %build
 %ant
